@@ -1,0 +1,38 @@
+version: '3'
+services:
+  app:
+    image: webdevops/php-nginx-dev:8.0
+    environment:
+      WEB_DOCUMENT_ROOT: /app/public
+      XDEBUG_REMOTE_AUTOSTART: 0
+      XDEBUG_REMOTE_PORT: 9000
+      XDEBUG_REMOTE_CONNECT_BACK: 1
+      XDEBUG: 0
+      PHP_IDE_CONFIG: "serverName=_"
+    container_name: app.int
+    ports:
+      - 80:80
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    networks:
+      - dev
+
+  db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: main
+      POSTGRES_PASSWORD: main
+      POSTGRES_DB: main
+    container_name: db.int
+    volumes:
+      - ./.data/var/lib/postgresql:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - dev
+
+networks:
+  dev:
+    external: true
